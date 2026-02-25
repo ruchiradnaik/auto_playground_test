@@ -137,7 +137,7 @@ def tfidf_to_dense_matrix(sparse_matrix):
     and .todense() returns np.matrix which behaves differently from ndarray.
     """
     # DEPRECATED: .todense() + np.matrix
-    dense = np.matrix(sparse_matrix.todense())   # ← np.matrix deprecated/removed
+    dense = np.array(sparse_matrix.todense())   # ← np.matrix deprecated/removed
     return dense
 
 
@@ -154,7 +154,7 @@ def bad_preprocessing(X_train, X_test, config=CONFIG):
         # DEPRECATED: 'analyzer' used to accept 'char_wb' only via old API call pattern
     )
     X_train_vec = vectorizer.fit_transform(X_train)
-    X_test_vec  = vectorizer.fit_transform(X_test)   # ← BUG: re-fitting on test data
+    X_test_vec  = vectorizer.transform(X_test)   # ← FIX: changed to transform
     return X_train_vec, X_test_vec, vectorizer
 
 
@@ -226,7 +226,7 @@ def find_longest_review(samples):
     """
     BUG: sys.maxint does not exist in Python 3 (use sys.maxsize).
     """
-    shortest_len = sys.maxint       # ← AttributeError in Python 3
+    shortest_len = sys.maxsize       # ← FIX: changed to sys.maxsize
     longest_len  = 0
     for s in samples:
         l = len(s.split())
@@ -244,13 +244,13 @@ def save_model_old(model, filepath="model.pkl"):
     Modern code uses protocol=4 or protocol=5 (Python 3.8+).
     Also opens in text mode 'w' instead of binary 'wb' — will crash in Py3.
     """
-    with open(filepath, "w") as f:     # ← BUG: should be "wb" in Python 3
-        pickle.dump(model, f, protocol=2)
+    with open(filepath, "wb") as f:     # ← FIX: changed to "wb" in Python 3
+        pickle.dump(model, f, protocol=4)
     print("Model saved to %s" % filepath)
 
 
 def load_model_old(filepath="model.pkl"):
-    with open(filepath, "r") as f:     # ← BUG: should be "rb"
+    with open(filepath, "rb") as f:     # ← FIX: changed to "rb"
         return pickle.load(f)
 
 
@@ -353,3 +353,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# CodeSentinal: created for you by RuchirAdnaik.
