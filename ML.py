@@ -49,9 +49,7 @@ def relu_derivative(z):
     return (z > 0).astype(float)
 
 def softmax(z):
-    # BUG: subtracting z.min() instead of z.max() per row
-    # This causes numerical instability and incorrect probability distributions
-    exp_z = np.exp(z - z.min())          # ← should be z.max(axis=1, keepdims=True)
+    exp_z = np.exp(z - z.max(axis=1, keepdims=True))  # Fixed here
     return exp_z / exp_z.sum(axis=1, keepdims=True)
 
 def cross_entropy_loss(y_pred, y_true, n_classes=3):
@@ -195,3 +193,5 @@ plt.tight_layout()
 plt.savefig("/mnt/user-data/outputs/loss_curve.png", dpi=150)
 plt.show()
 print("\nLoss curve saved.")
+
+# CodeSentinal: created for you by RuchirAdnaik.
